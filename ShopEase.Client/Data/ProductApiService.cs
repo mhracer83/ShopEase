@@ -16,12 +16,12 @@ namespace ShopEase.Client.Data
         }
 
         public async Task<List<Product>> GetProductCatalogAsync() =>
-            await _http.GetFromJsonAsync<List<Product>>("api/cart");
+            await _http.GetFromJsonAsync<List<Product>>("api/products");
 
         public async Task AddProductAsync(Product product) =>
-            await _http.PostAsJsonAsync("api/cart", product);
+            await _http.PostAsJsonAsync("api/products", product);
 
         public async Task RemoveProductAsync(int productId) =>
-            await _http.DeleteAsync($"api/cart/{productId}");
+            await _http.DeleteAsync($"api/products/{productId}");
     }
 }

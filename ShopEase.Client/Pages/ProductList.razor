@@ -1,56 +1,62 @@
 @page "/productcatalog"
+<Toast Message="@toastMessage" Show="@showToast" />
+
+@using ShopEase.Client.Data
+@using ShopEase.Client.Components
 @inject ShopEase.Client.Data.IProductApiService ProductApi
+@inject ShopEase.Client.Data.ICartApiService CartApi
 
-<h3>Your Cart</h3>
 
-@if (cartItems is null)
+<h3>Product Catalog</h3>
+
+@if (products is null)
 {
     <p><em>Loading...</em></p>
 }
+else if (!products.Any())
+{
+    <p>No products found.</p>
+}
 else
 {
-    <table>
-        <thead>
-            <tr>
-                <th>ProductID</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Category</th>
-                <th>Remove</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in cartItems)
-            {
-                <tr>
-                    <td>@product.ProductID</td>
-                    <td>@product.Name</td>
-                    <td>@product.Price</td>
-                    <td>@product.Category</td>
-                    <td>
-                        <button @onclick="@(() => Remove(product.ProductID))">Remove</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <p>
-        <strong>Total: </strong> $@cartItems.Sum(x => x.Price)
-    </p>
+    <div class="product-list">
+        @foreach (var product in products)
+        {
+            <ProductCard Product="product" OnAddToCart="@(p => AddToCart(p))" />
+        }
+    </div>
 }
 
 @code {
-    private List<ShopEase.Client.Data.Product> cartItems;
+    private List<ShopEase.Client.Data.Product> products;
+
+    // Toast notification logic
+    private bool showToast;
+    private string toastMessage;
 
     protected override async Task OnInitializedAsync()
     {
-        cartItems = await ProductApi.GetProductCatalogAsync();
+        products = await ProductApi.GetProductCatalogAsync();
     }
 
-    private async Task Remove(int productId)
+    private async Task AddToCart(Product product)
     {
-        await ProductApi.RemoveProductAsync(productId);
-        cartItems = await ProductApi.GetProductCatalogAsync();
+        var cartItem = new CartItem
+        {
+            UserID = 1,
+            ProductID = product.ProductID,
+            Quantity = 1
+        };
+        await CartApi.AddToCartAsync(cartItem);
+
+        // Show toast
+        toastMessage = $"{product.Name} added to cart!";
+        showToast = true;
+        StateHasChanged();
+
+        // Hide after 2.5 seconds
+        await Task.Delay(2500);
+        showToast = false;
         StateHasChanged();
     }
 }

@@ -22,6 +22,7 @@ namespace ShopEase.Client
             });
 
             builder.Services.AddScoped<IProductApiService, ProductApiService>();
+            builder.Services.AddScoped<ICartApiService, CartApiService>();
 
             await builder.Build().RunAsync();
         }
