@@ -23,11 +23,6 @@ TestResults/
 **/appsettings.json
 **/appsettings.*.json
 
-# Allow checked-in example/template config (optional)
-!**/appsettings.Development.json
-!**/appsettings.Example.json
-!**/appsettings.Template.json
-
 # Ignore user secrets and environment files
 secrets.json
 .env
