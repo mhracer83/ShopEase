@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ShopEase.Api.Models;
 
-namespace ShopEase.Client.Data
+namespace ShopEase.Api.Repositories
 {
-    public interface ICartApiService
+    public interface IProductRepository
     {
-        Task<List<Product>> GetCartItemsAsync();
         Task AddProductAsync(Product product);
         Task RemoveProductAsync(int productId);
+        Task<IEnumerable<Product>> GetProductCatalogAsync();
     }
 }

@@ -21,7 +21,7 @@ namespace ShopEase.Client
                 BaseAddress = new Uri("http://localhost:5144"),
             });
 
-            builder.Services.AddScoped<ICartApiService, CartApiService>();
+            builder.Services.AddScoped<IProductApiService, ProductApiService>();
 
             await builder.Build().RunAsync();
         }

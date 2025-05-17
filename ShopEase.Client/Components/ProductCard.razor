@@ -1,0 +1,25 @@
+@using ShopEase.Client.Data
+@inherits OwningComponentBase
+
+<div class="product-card">
+    <h4>@Product.Name</h4>
+    <p><strong>Category:</strong> @Product.Category</p>
+    <p><strong>Price:</strong> $@Product.Price</p>
+    <button @onclick="AddToCartClicked">Add to Cart</button>
+</div>
+
+@code {
+    [Parameter]
+    public Product Product { get; set; }
+
+    [Parameter]
+    public EventCallback<Product> OnAddToCart { get; set; }
+
+    private async Task AddToCartClicked()
+    {
+        if (OnAddToCart.HasDelegate)
+        {
+            await OnAddToCart.InvokeAsync(Product);
+        }
+    }
+}

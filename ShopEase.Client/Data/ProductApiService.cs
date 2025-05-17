@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace ShopEase.Client.Data
 {
-    public class CartApiService : ICartApiService
+    public class ProductApiService : IProductApiService
     {
         private readonly HttpClient _http;
 
-        public CartApiService(HttpClient http)
+        public ProductApiService(HttpClient http)
         {
             _http = http;
         }
 
-        public async Task<List<Product>> GetCartItemsAsync() =>
+        public async Task<List<Product>> GetProductCatalogAsync() =>
             await _http.GetFromJsonAsync<List<Product>>("api/cart");
 
         public async Task AddProductAsync(Product product) =>

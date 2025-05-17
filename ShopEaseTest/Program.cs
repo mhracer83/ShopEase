@@ -8,7 +8,7 @@ class Program
     static async System.Threading.Tasks.Task Main()
     {
         var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-        var repo = new MySqlCartRepository(config);
+        var repo = new MySqlProductRepository(config);
 
         // Add two products
         await repo.AddProductAsync(new Product("Laptop", 999.99M, "Electronics"));
@@ -18,7 +18,7 @@ class Program
         await repo.RemoveProductAsync(2);
 
         // Display cart
-        var items = await repo.GetCartItemsAsync();
+        var items = await repo.GetProductCatalogAsync();
         foreach (var p in items)
         {
             Console.WriteLine(p.GetProductDetails());

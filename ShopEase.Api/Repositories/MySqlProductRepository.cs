@@ -6,11 +6,11 @@ using ShopEase.Api.Models;
 
 namespace ShopEase.Api.Repositories
 {
-    public class MySqlCartRepository : ICartRepository
+    public class MySqlProductRepository : IProductRepository
     {
         private readonly string? _connectionString;
 
-        public MySqlCartRepository(IConfiguration configuration)
+        public MySqlProductRepository(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("ShopEaseDatabase");
         }
@@ -41,7 +41,7 @@ namespace ShopEase.Api.Repositories
             await cmd.ExecuteNonQueryAsync();
         }
 
-        public async Task<IEnumerable<Product>> GetCartItemsAsync()
+        public async Task<IEnumerable<Product>> GetProductCatalogAsync()
         {
             var products = new List<Product>();
             const string sql = "SELECT ProductID, Name, Price, Category FROM Products;";

@@ -7,8 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.json", optional: false);
 
 // register your repo & service
-builder.Services.AddSingleton<ICartRepository, MySqlCartRepository>();
-builder.Services.AddTransient<ICartService, CartService>();
+builder.Services.AddSingleton<IProductRepository, MySqlProductRepository>();
+builder.Services.AddTransient<IProductService, ProductService>();
 
 builder.Services.AddControllers();
 builder.Services.AddCors(o =>
