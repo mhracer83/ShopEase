@@ -1,0 +1,41 @@
+# Ignore Visual Studio and build output
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.dbmdl
+*.log
+*.pidb
+*.sln.docstates
+
+# Ignore Rider project files
+.idea/
+
+# Ignore test results
+TestResults/
+*.nunit.xml
+*.coverage
+*.coveragexml
+*.testlog
+
+# Ignore config files with secrets
+**/appsettings.json
+**/appsettings.*.json
+
+# Allow checked-in example/template config (optional)
+!**/appsettings.Development.json
+!**/appsettings.Example.json
+!**/appsettings.Template.json
+
+# Ignore user secrets and environment files
+secrets.json
+.env
+.env.*
+
+# Ignore local tools
+.localhistory/
+.vscode/
+.vscode-test/
+*.swp
+ShopEase.Api/appsettings.Development.json

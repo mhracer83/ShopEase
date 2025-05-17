@@ -1,0 +1,56 @@
+@page "/cart"
+@inject ShopEase.Client.Data.ICartApiService CartApi
+
+<h3>Your Cart</h3>
+
+@if (cartItems is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>ProductID</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in cartItems)
+            {
+                <tr>
+                    <td>@product.ProductID</td>
+                    <td>@product.Name</td>
+                    <td>@product.Price</td>
+                    <td>@product.Category</td>
+                    <td>
+                        <button @onclick="@(() => Remove(product.ProductID))">Remove</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p>
+        <strong>Total: </strong> $@cartItems.Sum(x => x.Price)
+    </p>
+}
+
+@code {
+    private List<ShopEase.Client.Data.Product> cartItems;
+
+    protected override async Task OnInitializedAsync()
+    {
+        cartItems = await CartApi.GetCartItemsAsync();
+    }
+
+    private async Task Remove(int productId)
+    {
+        await CartApi.RemoveProductAsync(productId);
+        cartItems = await CartApi.GetCartItemsAsync();
+        StateHasChanged();
+    }
+}
