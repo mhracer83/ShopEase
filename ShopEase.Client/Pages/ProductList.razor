@@ -1,6 +1,12 @@
 @page "/productcatalog"
 <Toast Message="@toastMessage" Show="@showToast" />
 
+@inject NavigationManager Nav
+
+<button @onclick="@(() => Nav.NavigateTo("/cart"))" class="catalog-nav-btn" aria-label="Go to Cart">
+    🛒 View Cart
+</button>
+
 @using ShopEase.Client.Data
 @using ShopEase.Client.Components
 @inject ShopEase.Client.Data.IProductApiService ProductApi

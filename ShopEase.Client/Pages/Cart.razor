@@ -1,26 +1,39 @@
 @page "/cart"
+
+@inject NavigationManager Nav
+
+<button @onclick="@(() => Nav.NavigateTo("/productcatalog"))" class="catalog-nav-btn"
+    aria-label="Back to Product Catalog">
+    ← Back to Products
+</button>
+
 @inject ShopEase.Client.Data.ICartApiService CartApi
 
-<h3>Your Cart</h3>
+
+
+<h3 id="cart-heading">Your Cart</h3>
 
 @if (cartItems == null)
 {
-    <p><em>Loading...</em></p>
+    <p aria-live="polite"><em>Loading...</em></p>
 }
 else if (!cartItems.Any())
 {
-    <p>Your cart is empty.</p>
+    <p aria-live="polite">Your cart is empty.</p>
 }
 else
 {
-    <table>
+    <table class="cart-table" aria-labelledby="cart-heading" aria-describedby="cart-table-desc">
+        <caption id="cart-table-desc" class="sr-only">
+            Shopping cart contents. Use the remove button to delete products from your cart.
+        </caption>
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Remove</th>
+                <th scope="col">Name</th>
+                <th scope="col">Category</th>
+                <th scope="col">Price</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Remove</th>
             </tr>
         </thead>
         <tbody>
@@ -32,30 +45,33 @@ else
                     <td>@item.Product?.Price.ToString("C")</td>
                     <td>@item.Quantity</td>
                     <td>
-                        <button @onclick="() => Remove(item.CartItemID)">Remove</button>
+                        <button @onclick="@(() => Remove(item.CartItemID))" aria-label="Remove @item.Product?.Name from cart"
+                            title="Remove @item.Product?.Name from cart">
+                            <span aria-hidden="true">🗑️</span>
+                            <span class="sr-only">Remove @item.Product?.Name</span>
+                        </button>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
     <p>
-        <strong>Total: </strong> $@cartItems.Sum(x => x.Product?.Price * x.Quantity ?? 0)
+        <strong>Total: </strong> $@cartItems.Sum(x => (x.Product?.Price ?? 0) * x.Quantity)
     </p>
 }
 
 @code {
     private List<ShopEase.Client.Data.CartItem> cartItems;
-    private int userId = 1; // Use a hardcoded user ID for now; later use authentication
 
     protected override async Task OnInitializedAsync()
     {
-        cartItems = await CartApi.GetCartItemsAsync(userId);
+        cartItems = await CartApi.GetCartItemsAsync(userId: 1); // Replace with real user ID
     }
 
     private async Task Remove(int cartItemId)
     {
         await CartApi.RemoveFromCartAsync(cartItemId);
-        cartItems = await CartApi.GetCartItemsAsync(userId);
+        cartItems = await CartApi.GetCartItemsAsync(userId: 1);
         StateHasChanged();
     }
 }

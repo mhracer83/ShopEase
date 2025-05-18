@@ -17,7 +17,7 @@ namespace ShopEase.Api.Services
         public Task<List<CartItem>> GetCartItemsAsync(int userId) =>
             _repo.GetCartItemsAsync(userId);
 
-        public Task AddToCartAsync(CartItem item) => _repo.AddToCartAsync(item);
+        public Task AddToCartAsync(CartItem item) => _repo.AddOrUpdateCartItemAsync(item);
 
         public Task RemoveFromCartAsync(int cartItemId) => _repo.RemoveFromCartAsync(cartItemId);
     }

@@ -1,10 +1,13 @@
 @using ShopEase.Client.Data
 
-<div class="product-card">
+<div class="product-card" tabindex="0"
+    aria-label="@($"Product: {Product.Name}, Category: {Product.Category}, Price: {Product.Price:C}")">
     <h4>@Product.Name</h4>
-    <p>@Product.Category</p>
-    <p>$@Product.Price</p>
-    <button @onclick="AddToCartClicked">Add to Cart</button>
+    <p><strong>Category:</strong> @Product.Category</p>
+    <p><strong>Price:</strong> $@Product.Price</p>
+    <button @onclick="AddToCartClicked" aria-label="Add @Product.Name to cart">
+        Add to Cart
+    </button>
 </div>
 
 @code {

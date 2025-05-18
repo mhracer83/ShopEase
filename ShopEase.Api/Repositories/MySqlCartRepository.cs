@@ -52,13 +52,17 @@ namespace ShopEase.Api.Repositories
             return cartItems;
         }
 
-        public async Task AddToCartAsync(CartItem item)
+        public async Task AddOrUpdateCartItemAsync(CartItem item)
         {
+            const string sql =
+                @"
+        INSERT INTO CartItems (UserID, ProductID, Quantity)
+        VALUES (@UserID, @ProductID, @Quantity)
+        ON DUPLICATE KEY UPDATE Quantity = Quantity + @Quantity;
+    ";
             using var conn = new MySqlConnection(_connectionString);
             await conn.OpenAsync();
-            var cmd = conn.CreateCommand();
-            cmd.CommandText =
-                @"INSERT INTO CartItems (UserID, ProductID, Quantity) VALUES (@UserID, @ProductID, @Quantity)";
+            using var cmd = new MySqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@UserID", item.UserID);
             cmd.Parameters.AddWithValue("@ProductID", item.ProductID);
             cmd.Parameters.AddWithValue("@Quantity", item.Quantity);

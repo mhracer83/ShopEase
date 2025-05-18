@@ -1,4 +1,10 @@
 ﻿@page "/"
+@inject NavigationManager Nav
+
+<button @onclick="@(() => Nav.NavigateTo("/productcatalog"))" class="catalog-nav-btn"
+    aria-label="Browse Product Catalog">
+    Browse Products
+</button>
 
 <PageTitle>Home</PageTitle>
 

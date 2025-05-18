@@ -7,7 +7,7 @@ namespace ShopEase.Api.Repositories
     public interface ICartRepository
     {
         Task<List<CartItem>> GetCartItemsAsync(int userId);
-        Task AddToCartAsync(CartItem item);
+        Task AddOrUpdateCartItemAsync(CartItem item);
         Task RemoveFromCartAsync(int cartItemId);
     }
 }
