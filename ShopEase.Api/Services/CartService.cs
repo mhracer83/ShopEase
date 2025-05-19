@@ -19,6 +19,7 @@ namespace ShopEase.Api.Services
 
         public Task AddToCartAsync(CartItem item) => _repo.AddOrUpdateCartItemAsync(item);
 
-        public Task RemoveFromCartAsync(int cartItemId) => _repo.RemoveFromCartAsync(cartItemId);
+        public Task RemoveFromCartAsync(int cartItemId, int userId) =>
+            _repo.RemoveFromCartAsync(cartItemId, userId);
     }
 }

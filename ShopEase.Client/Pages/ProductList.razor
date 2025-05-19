@@ -1,6 +1,9 @@
 @page "/productcatalog"
 <Toast Message="@toastMessage" Show="@showToast" />
 
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthProvider
+@inject PendingCartService PendingCartService
 @inject NavigationManager Nav
 
 <button @onclick="@(() => Nav.NavigateTo("/cart"))" class="catalog-nav-btn" aria-label="Go to Cart">
@@ -47,22 +50,35 @@ else
 
     private async Task AddToCart(Product product)
     {
-        var cartItem = new CartItem
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        var isLoggedIn = authState.User.Identity?.IsAuthenticated ?? false;
+
+        if (isLoggedIn)
         {
-            UserID = 1,
-            ProductID = product.ProductID,
-            Quantity = 1
-        };
-        await CartApi.AddToCartAsync(cartItem);
+            var cartItem = new CartItem
+            {
+                // Replace this with actual UserID logic, or let your API handle user association by JWT
+                ProductID = product.ProductID,
+                Quantity = 1
+            };
+            await CartApi.AddToCartAsync(cartItem);
 
-        // Show toast
-        toastMessage = $"{product.Name} added to cart!";
-        showToast = true;
-        StateHasChanged();
+            // Show toast
+            toastMessage = $"{product.Name} added to cart!";
+            showToast = true;
+            StateHasChanged();
 
-        // Hide after 2.5 seconds
-        await Task.Delay(2500);
-        showToast = false;
-        StateHasChanged();
+            // Hide after 2.5 seconds
+            await Task.Delay(2500);
+            showToast = false;
+            StateHasChanged();
+        }
+        else
+        {
+            // Save the intended product for after login
+            PendingCartService.SetPending(product.ProductID);
+            // Optionally, encode the returnUrl so you can come back here
+            Nav.NavigateTo($"/login?returnUrl={Uri.EscapeDataString(Nav.Uri)}");
+        }
     }
 }

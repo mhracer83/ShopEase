@@ -1,6 +1,8 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +25,14 @@ namespace ShopEase.Client
 
             builder.Services.AddScoped<IProductApiService, ProductApiService>();
             builder.Services.AddScoped<ICartApiService, CartApiService>();
+            builder.Services.AddScoped<PendingCartService>();
+
+            builder.Services.AddBlazoredLocalStorage();
+            builder.Services.AddAuthorizationCore();
+            builder.Services.AddScoped<ApiAuthenticationStateProvider>();
+            builder.Services.AddScoped<AuthenticationStateProvider>(provider =>
+                provider.GetRequiredService<ApiAuthenticationStateProvider>()
+            );
 
             await builder.Build().RunAsync();
         }

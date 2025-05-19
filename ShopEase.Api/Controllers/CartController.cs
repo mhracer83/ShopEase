@@ -1,9 +1,12 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShopEase.Api.Models;
 using ShopEase.Api.Services;
 
 namespace ShopEase.Api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class CartController : ControllerBase
@@ -15,11 +18,15 @@ namespace ShopEase.Api.Controllers
             _cartService = cartService;
         }
 
-        // GET: api/cart/{userId}
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetCart(int userId)
+        // GET: api/cart
+        [HttpGet]
+        public async Task<IActionResult> GetCart()
         {
-            var items = await _cartService.GetCartItemsAsync(userId);
+            var userId = GetUserId();
+            if (userId == null)
+                return Unauthorized();
+
+            var items = await _cartService.GetCartItemsAsync(userId.Value);
             return Ok(items);
         }
 
@@ -27,6 +34,13 @@ namespace ShopEase.Api.Controllers
         [HttpPost("add")]
         public async Task<IActionResult> AddToCart([FromBody] CartItem item)
         {
+            var userId = GetUserId();
+            if (userId == null)
+                return Unauthorized();
+
+            // Overwrite any userId from client with the one from claims
+            item.UserID = userId.Value;
+
             await _cartService.AddToCartAsync(item);
             return Ok();
         }
@@ -35,8 +49,19 @@ namespace ShopEase.Api.Controllers
         [HttpDelete("{cartItemId}")]
         public async Task<IActionResult> RemoveFromCart(int cartItemId)
         {
-            await _cartService.RemoveFromCartAsync(cartItemId);
+            var userId = GetUserId();
+            if (userId == null)
+                return Unauthorized();
+
+            await _cartService.RemoveFromCartAsync(cartItemId, userId.Value);
             return NoContent();
+        }
+
+        // Helper to extract userId from JWT claims
+        private int? GetUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return int.TryParse(userIdClaim, out int id) ? id : null;
         }
     }
 }

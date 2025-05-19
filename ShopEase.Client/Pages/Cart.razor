@@ -1,6 +1,12 @@
 @page "/cart"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@attribute [Authorize]
 
 @inject NavigationManager Nav
+@inject AuthenticationStateProvider AuthProvider
+@inject ShopEase.Client.Data.ICartApiService CartApi
+
 
 <button @onclick="@(() => Nav.NavigateTo("/productcatalog"))" class="catalog-nav-btn"
     aria-label="Back to Product Catalog">
@@ -62,16 +68,31 @@ else
 
 @code {
     private List<ShopEase.Client.Data.CartItem> cartItems;
+    private string error;
 
     protected override async Task OnInitializedAsync()
     {
-        cartItems = await CartApi.GetCartItemsAsync(userId: 1); // Replace with real user ID
+        Console.WriteLine("Cart page initializing");
+        try
+        {
+            cartItems = await CartApi.GetCartItemsAsync();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            var returnUrl = Uri.EscapeDataString(Nav.ToBaseRelativePath(Nav.Uri));
+            Nav.NavigateTo($"/login?returnUrl={returnUrl}", forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            error = "Could not load cart items: " + ex.Message;
+        }
     }
+
 
     private async Task Remove(int cartItemId)
     {
         await CartApi.RemoveFromCartAsync(cartItemId);
-        cartItems = await CartApi.GetCartItemsAsync(userId: 1);
+        cartItems = cartItems = await CartApi.GetCartItemsAsync();
         StateHasChanged();
     }
 }

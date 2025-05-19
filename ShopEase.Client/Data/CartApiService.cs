@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -14,8 +15,14 @@ namespace ShopEase.Client.Data
             _http = http;
         }
 
-        public async Task<List<CartItem>> GetCartItemsAsync(int userId) =>
-            await _http.GetFromJsonAsync<List<CartItem>>($"api/cart/{userId}");
+        public async Task<List<CartItem>> GetCartItemsAsync()
+        {
+            var response = await _http.GetAsync("api/cart");
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+                throw new UnauthorizedAccessException();
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<CartItem>>();
+        }
 
         public async Task AddToCartAsync(CartItem item) =>
             await _http.PostAsJsonAsync("api/cart/add", item);

@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShopEase.Api.Models;
 using ShopEase.Api.Services;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class ProductsController : ControllerBase
@@ -10,6 +12,7 @@ public class ProductsController : ControllerBase
 
     public ProductsController(IProductService productService) => _productService = productService;
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<IActionResult> Get() => Ok(await _productService.GetProductCatalogAsync());
 

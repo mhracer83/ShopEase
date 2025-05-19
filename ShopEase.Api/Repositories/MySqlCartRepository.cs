@@ -69,13 +69,15 @@ namespace ShopEase.Api.Repositories
             await cmd.ExecuteNonQueryAsync();
         }
 
-        public async Task RemoveFromCartAsync(int cartItemId)
+        public async Task RemoveFromCartAsync(int cartItemId, int userId)
         {
             using var conn = new MySqlConnection(_connectionString);
             await conn.OpenAsync();
             var cmd = conn.CreateCommand();
-            cmd.CommandText = @"DELETE FROM CartItems WHERE CartItemID = @CartItemID";
+            cmd.CommandText =
+                @"DELETE FROM CartItems WHERE CartItemID = @CartItemID AND UserID = @UserID";
             cmd.Parameters.AddWithValue("@CartItemID", cartItemId);
+            cmd.Parameters.AddWithValue("@UserID", userId);
             await cmd.ExecuteNonQueryAsync();
         }
     }

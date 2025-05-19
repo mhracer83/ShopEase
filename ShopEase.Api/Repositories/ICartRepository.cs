@@ -8,6 +8,6 @@ namespace ShopEase.Api.Repositories
     {
         Task<List<CartItem>> GetCartItemsAsync(int userId);
         Task AddOrUpdateCartItemAsync(CartItem item);
-        Task RemoveFromCartAsync(int cartItemId);
+        Task RemoveFromCartAsync(int cartItemId, int userId);
     }
 }
